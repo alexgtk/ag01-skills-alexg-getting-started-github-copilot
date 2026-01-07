@@ -1,24 +1,11 @@
-# Unregister endpoint (restored)
-@app.post("/activities/{activity_name}/unregister")
-async def unregister_participant(activity_name: str, request: Request):
-    """Unregister a student from an activity"""
-    data = await request.json()
-    email = data.get("email")
-    if not email:
-        raise HTTPException(status_code=400, detail="Email is required")
-    if activity_name not in activities:
-        raise HTTPException(status_code=404, detail="Activity not found")
-    activity = activities[activity_name]
-    if email not in activity["participants"]:
-        raise HTTPException(status_code=400, detail="Student not registered for this activity")
-    activity["participants"].remove(email)
-    return {"success": True, "message": f"Unregistered {email} from {activity_name}"}
 """
 High School Management System API
 
 A super simple FastAPI application that allows students to view and sign up
 for extracurricular activities at Mergington High School.
 """
+
+# Unregister endpoint (restored) - moved below app definition
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
@@ -138,3 +125,22 @@ def signup_for_activity(activity_name: str, email: str):
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
+
+
+# Unregister endpoint (restored) - now after app is defined
+from fastapi import Request
+
+@app.post("/activities/{activity_name}/unregister")
+async def unregister_participant(activity_name: str, request: Request):
+    """Unregister a student from an activity"""
+    data = await request.json()
+    email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    activity = activities[activity_name]
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student not registered for this activity")
+    activity["participants"].remove(email)
+    return {"success": True, "message": f"Unregistered {email} from {activity_name}"}
