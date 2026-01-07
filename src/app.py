@@ -1,3 +1,18 @@
+# Unregister endpoint (restored)
+@app.post("/activities/{activity_name}/unregister")
+async def unregister_participant(activity_name: str, request: Request):
+    """Unregister a student from an activity"""
+    data = await request.json()
+    email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    activity = activities[activity_name]
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student not registered for this activity")
+    activity["participants"].remove(email)
+    return {"success": True, "message": f"Unregistered {email} from {activity_name}"}
 """
 High School Management System API
 
